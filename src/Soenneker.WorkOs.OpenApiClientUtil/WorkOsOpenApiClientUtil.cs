@@ -1,35 +1,27 @@
-using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
-using Soenneker.Extensions.Configuration;
 using Soenneker.Extensions.ValueTask;
 using Soenneker.WorkOs.HttpClients.Abstract;
 using Soenneker.WorkOs.OpenApiClientUtil.Abstract;
 using Soenneker.WorkOs.OpenApiClient;
-using Soenneker.Kiota.GenericAuthenticationProvider;
 using Soenneker.Utils.AsyncSingleton;
 
 namespace Soenneker.WorkOs.OpenApiClientUtil;
 
-///<inheritdoc cref="IWorkOsOpenApiClientUtil"/>
 public sealed class WorkOsOpenApiClientUtil : IWorkOsOpenApiClientUtil
 {
     private readonly AsyncSingleton<WorkOsOpenApiClient> _client;
 
-    public WorkOsOpenApiClientUtil(IWorkOsOpenApiHttpClient httpClientUtil, IConfiguration configuration)
+    public WorkOsOpenApiClientUtil(IWorkOsOpenApiHttpClient httpClientProvider)
     {
         _client = new AsyncSingleton<WorkOsOpenApiClient>(async token =>
         {
-            HttpClient httpClient = await httpClientUtil.Get(token).NoSync();
+            HttpClient httpClient = await httpClientProvider.Get(token).NoSync();
 
-            var apiKey = configuration.GetValueStrict<string>("WorkOs:ApiKey");
-            string authHeaderValueTemplate = configuration["WorkOs:AuthHeaderValueTemplate"] ?? "{token}";
-            string authHeaderValue = authHeaderValueTemplate.Replace("{token}", apiKey, StringComparison.Ordinal);
-
-            var requestAdapter = new HttpClientRequestAdapter(new GenericAuthenticationProvider(headerValue: authHeaderValue), httpClient: httpClient);
+            var requestAdapter = new HttpClientRequestAdapter(new AnonymousAuthenticationProvider(), httpClient: httpClient);
 
             return new WorkOsOpenApiClient(requestAdapter);
         });
@@ -40,18 +32,11 @@ public sealed class WorkOsOpenApiClientUtil : IWorkOsOpenApiClientUtil
         return _client.Get(cancellationToken);
     }
 
-    /// <summary>
-    /// Releases resources used by the current instance.
-    /// </summary>
     public void Dispose()
     {
         _client.Dispose();
     }
 
-    /// <summary>
-    /// Asynchronously releases resources used by the current instance.
-    /// </summary>
-    /// <returns>A task that represents the asynchronous operation.</returns>
     public ValueTask DisposeAsync()
     {
         return _client.DisposeAsync();

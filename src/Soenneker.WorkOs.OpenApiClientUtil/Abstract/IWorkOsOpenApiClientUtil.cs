@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 namespace Soenneker.WorkOs.OpenApiClientUtil.Abstract;
 
 /// <summary>
-/// Exposes a cached OpenAPI client instance.
+/// Provides a cached WorkOS API client backed by the configured HTTP transport.
 /// </summary>
-public interface IWorkOsOpenApiClientUtil: IDisposable, IAsyncDisposable
+public interface IWorkOsOpenApiClientUtil : IDisposable, IAsyncDisposable
 {
     /// <summary>
-    /// Gets the value.
+    /// Gets the cached WorkOS API client.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task containing the result of the operation.</returns>
+    /// <returns>The configured WorkOS API client.</returns>
     ValueTask<WorkOsOpenApiClient> Get(CancellationToken cancellationToken = default);
 }
