@@ -11,6 +11,7 @@ using Soenneker.Utils.AsyncSingleton;
 
 namespace Soenneker.WorkOs.OpenApiClientUtil;
 
+/// <inheritdoc cref="IWorkOsOpenApiClientUtil" />
 public sealed class WorkOsOpenApiClientUtil : IWorkOsOpenApiClientUtil
 {
     private readonly AsyncSingleton<WorkOsOpenApiClient> _client;
