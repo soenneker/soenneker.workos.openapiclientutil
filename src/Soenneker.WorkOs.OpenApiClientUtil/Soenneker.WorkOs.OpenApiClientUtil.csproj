@@ -41,7 +41,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.WorkOs.HttpClients" Version="4.0.99" />
+        <PackageReference Include="Soenneker.WorkOs.HttpClients" Version="4.0.100" />
         <PackageReference Include="Soenneker.WorkOs.OpenApiClient" Version="4.0.91" />
     </ItemGroup>
 </Project>
